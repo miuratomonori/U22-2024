@@ -2,10 +2,3 @@
   margin: 0 auto;
   display: block;
 }
-
-body {
-  background-image: url('nuigurumi_bear.png'); /*画像のパスを指定*/
-  background-size: cover;
-  background-position: center;
-  /*background-color: #f4f4f4;*/
-}
