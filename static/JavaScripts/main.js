@@ -2,116 +2,62 @@ src="https://code.jquery.com/jquery-3.6.0.min.js"
 integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
 crossorigin="anonymous"
 
-    //月毎の日数
-    let month_days =[31,28,31,30,31,30,31,31,30,31,30,31];
-    //フォームの取得
-    const form = document.forms.checkes;   
-    
-    var vals = []; // 配列を定義
+//月毎の日数
+let month_days =[31,28,31,30,31,30,31,31,30,31,30,31];
+//フォームの取得
+const form = document.forms.checkes;   
 
-    //↓平均が選択された場合、平均以外と日単位の期間を選択できなくする
+var vals = []; // 配列を定義
 
-    //各radiobuttonのドキュメント
-    let average = document.getElementById("average");
-    let max_average = document.getElementById("max_average");
-    let min_average = document.getElementById("min_average");
-    let max = document.getElementById("max");
-    let min = document.getElementById("min");
-    let averages = document.getElementById('averages');
-    let day_date = document.getElementById('day_date');
-       
-    function graphDataSet(){
-        
-    }
+//↓平均が選択された場合、平均以外と日単位の期間を選択できなくする
 
-    document.getElementById('log').onclick=function(){
-        console.log(x_date_top);
-    }
-    
-    //プルダウンメニュー
-    const selectBox1 = document.getElementById('topyearSelect');
-    const selectBox2 = document.getElementById('endyearSelect');
-    const selectBox3 = document.getElementById('topmonthSelect');
-    const selectBox4 = document.getElementById('endmonthSelect');
-    const startYear = 1946;
-    const endYear = 2022;
-    const startMonth = 1;
-    const endMonth = 12;
+//各radiobuttonのドキュメント
+let average = document.getElementById("average");
+let max_average = document.getElementById("max_average");
+let min_average = document.getElementById("min_average");
+let max = document.getElementById("max");
+let min = document.getElementById("min");
+let averages = document.getElementById('averages');
+let day_date = document.getElementById('day_date');
 
-    //初めの年のプルダウンメニュー
-    for(let year = startYear; year <= endYear; year++){
-        const option1 = document.createElement('option');
-        option1.value = year;
-        option1.textContent = year;
-        selectBox1.appendChild(option1);
+document.getElementById('log').onclick=function(){
+    console.log(x_date_top);
+}
 
-    //終わりの年のプルダウンメニュー
-        const option2 = document.createElement('option');
-        option2.value = year;
-        option2.textContent = year;
-        selectBox2.appendChild(option2);
-    }
+//プルダウンメニュー
+const selectBox1 = document.getElementById('topyearSelect');
+const selectBox2 = document.getElementById('endyearSelect');
+const selectBox3 = document.getElementById('topmonthSelect');
+const selectBox4 = document.getElementById('endmonthSelect');
+const startYear = 1946;
+const endYear = 2022;
+const startMonth = 1;
+const endMonth = 12;
 
-    //初めの月のプルダウンメニュー
-    for(let month = startMonth; month <= endMonth; month++){
-        const option1 = document.createElement('option');
-        option1.value = month;
-        option1.textContent = month;
-        selectBox3.appendChild(option1);
+//初めの年のプルダウンメニュー
+for(let year = startYear; year <= endYear; year++){
+    const option1 = document.createElement('option');
+    option1.value = year;
+    option1.textContent = year;
+    selectBox1.appendChild(option1);
 
-    //終わりの月のプルダウンメニュー
-        const option2 = document.createElement('option');
-        option2.value = month;
-        option2.textContent = month;
-        selectBox4.appendChild(option2);
-    }
+//終わりの年のプルダウンメニュー
+    const option2 = document.createElement('option');
+    option2.value = year;
+    option2.textContent = year;
+    selectBox2.appendChild(option2);
+}
 
+//初めの月のプルダウンメニュー
+for(let month = startMonth; month <= endMonth; month++){
+    const option1 = document.createElement('option');
+    option1.value = month;
+    option1.textContent = month;
+    selectBox3.appendChild(option1);
 
-    //
-    function buttonClick(){
-        console.log("test");
-        const y_data = document.querySelector('input[name="y_data"]:checked');
-        const topyear = selectBox1.value;
-        const endyear = selectBox2.value;
-        const topmonth = selectBox3.value;
-        const endmonth = selectBox4.value;
-        const x_option = document.querySelector('input[name="x_option"]:checked');
-        var x_top = "";
-        var x_end = "";
-        var form = document.forms['checkes'];
-
-        //
-        if(topyear > endyear){
-            alert("入力値に誤りがありました。");
-        }else if(topyear == endyear && topmonth > endmonth){
-            alert("入力値に誤りがありました。");
-        }else{
-            if(x_option.id == "year"){
-                x_top = topyear;
-                x_end = endyear;
-            }else if(x_option.id == "month"){
-                x_top = topyear + "_" + topmonth;
-                x_end = endyear + "_" + endmonth;
-            }else if(x_option.id == "day"){
-                x_top = topyear + "_" + topmonth + "_1";
-                x_end = endyear + "_" + endmonth + "_1";
-            }
-            $.ajax({
-                'url':'{% url "change_graph" %}',
-                'type':'POST',
-                'data':{
-                    'x_top':x_top,
-                    'x_end':x_end,
-                    'x_option':x_option.id,
-                    'y_select':y_data.id, 
-                },
-                'dataType': 'json',
-                success: function(response){
-                    alert('ok');
-                },
-                error: function(xhr, status, error){
-                    alert('Submission failed');
-                }
-            })
-        }
-    }
+//終わりの月のプルダウンメニュー
+    const option2 = document.createElement('option');
+    option2.value = month;
+    option2.textContent = month;
+    selectBox4.appendChild(option2);
+}

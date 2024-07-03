@@ -1,12 +1,14 @@
 from django.views.generic import TemplateView
 from django.shortcuts import render
-#莉･荳玖ｨｭ螳�
-import pandas as pd             #繝�繝ｼ繧ｿ隗｣譫舌Λ繧､繝悶Λ繝ｪ
+from django.http import JsonResponse
 
-from PIL import Image           #逕ｻ蜒丞�ｦ逅�繝ｩ繧､繝悶Λ繝ｪ
+import pandas as pd
+from datetime import datetime as dt
+
+from PIL import Image
+from pathlib import Path          
 from django.contrib.auth.models import User
-
-import copy                     #繧ｳ繝斐�ｼ縺ｧ縺阪ｋ(繝�繧｣繝ｼ繝励さ繝斐�ｼ)
+import copy                    
 
 from django.shortcuts import render
 import io
@@ -14,24 +16,24 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import base64
-from django.views.decorators.csrf import csrf_exempt
 
-@csrf_exempt
+#最初に呼び出される
 def index_template(request):
-    df = pd.read_csv('C:\\Users\\user\\Desktop\\testncc\\static\\csv\\year_date.csv')
+    
+    df = pd.read_csv('C:\\Users\\user\\python-2023\\testproject\\static\\csv\\year_date.csv')
     plt.figure(figsize=(10,5))
     plt.plot(df['date'],df['average'])
     plt.xlabel('year')
     plt.ylabel('temperature')
     plt.grid()
 
-
     graph = get_image()
     return render(request, 'index.html',{'graph': graph})
 
+#グラフを作成
 def graph_create(x_top,x_end,y_select,df):
 
-    views_df = df[df["date"] >= int(x_top)] & df[["date"] <= int(x_end)]
+    views_df = df[(df['date'] >= x_top) & (df['date'] <= x_end)]
     plt.figure(figsize=(10,5))
     plt.plot(views_df["date"],views_df[y_select])
 
@@ -39,38 +41,33 @@ def graph_create(x_top,x_end,y_select,df):
     plt.ylabel('temperature')
     plt.grid()
 
-
     graph = get_image()
-    return(graph)
+    return graph
 
+#グラフを変える
 def change_graph(request):
-    if request.method == 'POST':
-        x_top = request.POST['x_top']
-        x_end = request.POST['x_end']
-        x_option = request.POST['x_option']
-        y_select = request.POST['y_select']
+    x_option = request.POST['x_option']
+    y_select = request.POST['y_select']
+    x_top = request.POST['x_top']
+    x_end = request.POST['x_end']
 
-        if x_option == "year":
-            df = pd.read_csv('C:/Users/user/Downloads/python-2023/python-2023/testproject/static/csv/year_date.csv')
-        elif x_option == "month":
-            df = pd.read_csv('C:/Users/user/Downloads/python-2023/python-2023/testproject/static/csv/mth_average.csv')
-        elif x_option == "day":
-            df = pd.read_csv('C:/Users/user/Downloads/python-2023/python-2023/testproject/static/csv/day_average.csv')
+    if x_option == "year":
+        df = pd.read_csv('C:\\Users\\user\\python-2023\\testproject\\static\\csv\\year_date.csv')
+        x_top = int(request.POST['x_top'])
+        x_end = int(request.POST['x_end'])
+    elif x_option == "month":
+        df = pd.read_csv('C:\\Users\\user\\python-2023\\testproject\\static\\csv\\mth_date.csv')
+        df['date'] = pd.to_datetime(df['date'].astype(str))
+        print(x_top)
+    elif x_option == "day":
+        df = pd.read_csv('C:\\Users\\user\\python-2023\\testproject\\static\\csv\\day_date.csv')
+        df['date'] = pd.to_datetime(df['date'].astype(str))
 
-        if y_select == "average":
-            grath = graph_create(x_top,x_end,y_select,df)
-        elif y_select == "max_average":
-            grath = graph_create(x_top,x_end,y_select,df)
-        elif y_select == "min_average":
-            grath = graph_create(x_top,x_end,y_select,df)
-        elif y_select == "max":
-            grath = graph_create(x_top,x_end,y_select,df)
-        elif y_select == "min":
-            grath = graph_create(x_top,x_end,y_select,df)
     
-    graph = get_image()
-    return render(request, 'index.html',{'graph': graph})    
+    graph = graph_create(x_top, x_end, y_select, df)
+    return JsonResponse({'graph': graph})
 
+#画像にする
 def get_image():
  buffer = io.BytesIO()
  plt.savefig(buffer, format='png')
